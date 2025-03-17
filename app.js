@@ -1,17 +1,26 @@
-// El principal objetivo de este desafío es fortalecer tus habilidades en lógica de programación. Aquí deberás desarrollar la lógica para resolver el problema.
-
 // Inicializamos un array vacío para almacenar los nombres de los amigos
 let amigos = [];
+
+// Función para validar el nombre ingresado
+function validarNombre(nombre) {
+    const regex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/;
+    if (nombre === "") {
+        alert('Debe ingresar un nombre.');
+        return false;
+    }
+    if (!regex.test(nombre)) {
+        alert('Ingrese un nombre válido.');
+        return false;
+    }
+    return true;
+}
 
 // Función para agregar un amigo a la lista
 function agregarAmigo() {
     const inputAmigo = document.getElementById('amigo');
     const nombre = inputAmigo.value.trim();
 
-    if (nombre === "") {
-        alert('Por favor, ingrese un nombre válido.');
-        return;
-    }
+    if (!validarNombre(nombre)) return;
 
     if (amigos.includes(nombre)) {
         alert('Este nombre ya ha sido agregado.');
@@ -22,6 +31,13 @@ function agregarAmigo() {
     inputAmigo.value = "";
     mostrarAmigos();
 }
+
+// Permitir agregar amigo con Enter
+document.getElementById('amigo').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        agregarAmigo();
+    }
+});
 
 // Función para mostrar la lista de amigos en la interfaz
 function mostrarAmigos() {
@@ -35,40 +51,27 @@ function mostrarAmigos() {
     });
 }
 
-// Función para sortear al azar los amigos
+// Función para sortear un amigo secreto al azar
 function sortearAmigo() {
     if (amigos.length < 2) {
         alert('Se necesitan al menos 2 participantes para realizar el sorteo.');
         return;
     }
 
-    const amigosDisponibles = [...amigos];
-    const resultados = {};
+    const amigoSecreto = amigos[Math.floor(Math.random() * amigos.length)];
 
-    amigos.forEach(amigo => {
-        let elegido;
-
-        do {
-            elegido = amigosDisponibles[Math.floor(Math.random() * amigosDisponibles.length)];
-        } while (elegido === amigo);
-
-        resultados[amigo] = elegido;
-        amigosDisponibles.splice(amigosDisponibles.indexOf(elegido), 1);
-    });
-
-    mostrarResultado(resultados);
+    mostrarResultado(amigoSecreto);
 }
 
 // Función para mostrar el resultado del sorteo
-function mostrarResultado(resultados) {
+function mostrarResultado(amigoSecreto) {
     const resultadoDiv = document.getElementById('resultado');
-    resultadoDiv.innerHTML = '';
-
-    for (const [amigo, amigoSecreto] of Object.entries(resultados)) {
-        const li = document.createElement('li');
-        li.textContent = `${amigo} tiene que regalarle a ${amigoSecreto}.`;
-        resultadoDiv.appendChild(li);
-    }
+    resultadoDiv.innerHTML = `<li>Tu amigo secreto es: <strong>${amigoSecreto}</strong>.</li>`;
 }
 
-
+// Función para borrar la lista de amigos
+function borrarLista() {
+    amigos = [];
+    mostrarAmigos();
+    document.getElementById('resultado').innerHTML = '';
+}
